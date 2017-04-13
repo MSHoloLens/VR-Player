@@ -24,4 +24,28 @@ namespace VR_Player.Content
         public Vector3 pos;
         public Vector3 color;
     };
+
+    internal struct TexturedVertex
+    {
+        /// <summary>
+        /// Position
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        /// Texture coordinate
+        /// </summary>
+        public Vector2 TextureCoordinate;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="position">Position</param>
+        /// <param name="textureCoordinate">Texture Coordinate</param>
+        public TexturedVertex(Vector3 position, Vector2 textureCoordinate)
+        {
+            Position = position;
+            TextureCoordinate = textureCoordinate;
+        }
+    }
 }

@@ -14,7 +14,8 @@ cbuffer ViewProjectionConstantBuffer : register(b1)
 struct VertexShaderInput
 {
     min16float3 pos     : POSITION;
-    min16float3 color   : COLOR0;
+    //min16float3 color   : COLOR0;
+	min16float2 texcoord : TEXCOORD0;
     uint        instId  : SV_InstanceID;
 };
 
@@ -24,8 +25,9 @@ struct VertexShaderInput
 struct VertexShaderOutput
 {
     min16float4 pos     : SV_POSITION;
-    min16float3 color   : COLOR0;
-    uint        viewId  : TEXCOORD0;  // SV_InstanceID % 2
+    //min16float3 color   : COLOR0;
+	min16float2 texcoord : TEXCOORD0;
+    uint        viewId  : TEXCOORD1;  // SV_InstanceID % 2
 };
 
 // Simple shader to do vertex processing on the GPU.
@@ -48,7 +50,7 @@ VertexShaderOutput main(VertexShaderInput input)
     output.pos = (min16float4)pos;
 
     // Pass the color through without modification.
-    output.color = input.color;
+	output.texcoord = input.texcoord;
 
     // Set the instance ID. The pass-through geometry shader will set the
     // render target array index to whatever value is set here.

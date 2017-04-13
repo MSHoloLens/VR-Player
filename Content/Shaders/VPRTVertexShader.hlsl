@@ -14,7 +14,8 @@ cbuffer ViewProjectionConstantBuffer : register(b1)
 struct VertexShaderInput
 {
     min16float3 pos     : POSITION;
-    min16float3 color   : COLOR0;
+    //min16float3 color   : COLOR0;
+	min16float2 texcoord : TEXCOORD;
     uint        instId  : SV_InstanceID;
 };
 
@@ -23,7 +24,8 @@ struct VertexShaderInput
 struct VertexShaderOutput
 {
     min16float4 pos     : SV_POSITION;
-    min16float3 color   : COLOR0;
+    //min16float3 color   : COLOR0;
+	min16float2 texcoord : TEXCOORD;
     uint        rtvId   : SV_RenderTargetArrayIndex; // SV_InstanceID % 2
 };
 
@@ -47,7 +49,7 @@ VertexShaderOutput main(VertexShaderInput input)
     output.pos = (min16float4)pos;
 
     // Pass the color through without modification.
-    output.color = input.color;
+	output.texcoord = input.texcoord;
 
     // Set the render target array index.
     output.rtvId = idx;

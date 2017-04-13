@@ -220,11 +220,17 @@ namespace VR_Player.Common
                 // Update the view matrices. Holographic cameras (such as Microsoft HoloLens) are
                 // constantly moving relative to the world. The view matrices need to be updated
                 // every frame.
-                viewProjectionConstantBufferData.viewProjectionLeft  = Matrix4x4.Transpose(
-                    viewCoordinateSystemTransform.Left * cameraProjectionTransform.Left
+
+
+                Matrix4x4 traslationL = Matrix4x4.CreateTranslation(0.2f, 0f, 0);
+                Matrix4x4 traslationR = Matrix4x4.CreateTranslation(-2.1f, 0f, 0);
+
+
+                viewProjectionConstantBufferData.viewProjectionLeft = Matrix4x4.Transpose(
+                    cameraProjectionTransform.Left * traslationL
                     );
                 viewProjectionConstantBufferData.viewProjectionRight = Matrix4x4.Transpose(
-                    viewCoordinateSystemTransform.Right * cameraProjectionTransform.Right
+                    cameraProjectionTransform.Right * traslationR
                     );
             }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX.Direct3D11;
+using System;
 using System.Numerics;
 using VR_Player.Common;
 using Windows.UI.Input.Spatial;
@@ -22,6 +23,8 @@ namespace VR_Player.Content
         private SharpDX.Direct3D11.PixelShader      pixelShader;
         private SharpDX.Direct3D11.Buffer           modelConstantBuffer;
 
+        private ShaderResourceView                  textureView;
+
         // System resources for cube geometry.
         private ModelConstantBuffer                 modelConstantBufferData;
         private int                                 indexCount = 0;
@@ -36,6 +39,7 @@ namespace VR_Player.Content
         // shader just to set the render target array index.
         private bool                                usingVprtShaders = false;
 
+        private Texture2D                           texture;
         /// <summary>
         /// Loads vertex and pixel shaders from files and instantiates the cube geometry.
         /// </summary>
@@ -73,20 +77,21 @@ namespace VR_Player.Content
         {
             // Rotate the cube.
             // Convert degrees to radians, then convert seconds to rotation angle.
-            float     radiansPerSecond  = this.degreesPerSecond * ((float)Math.PI / 180.0f);
-            double    totalRotation     = timer.TotalSeconds * radiansPerSecond;
-            float     radians           = (float)System.Math.IEEERemainder(totalRotation, 2 * Math.PI);
-            Matrix4x4 modelRotation     = Matrix4x4.CreateFromAxisAngle(new Vector3(0, 1, 0), -radians);
+            //float     radiansPerSecond  = this.degreesPerSecond * ((float)Math.PI / 180.0f);
+            //double    totalRotation     = timer.TotalSeconds * radiansPerSecond;
+            //float     radians           = (float)System.Math.IEEERemainder(totalRotation, 2 * Math.PI);
+            //Matrix4x4 modelRotation     = Matrix4x4.CreateFromAxisAngle(new Vector3(0, 1, 0), -radians);
 
 
             // Position the cube.
-            Matrix4x4 modelTranslation  = Matrix4x4.CreateTranslation(position);
+            //Matrix4x4 modelTranslation  = Matrix4x4.CreateTranslation(position);
 
 
             // Multiply to get the transform matrix.
             // Note that this transform does not enforce a particular coordinate system. The calling
             // class is responsible for rendering this content in a consistent manner.
-            Matrix4x4 modelTransform    = modelRotation * modelTranslation;
+            //Matrix4x4 modelTransform    = modelRotation * modelTranslation;
+            Matrix4x4 modelTransform = Matrix4x4.CreateTranslation(position);
 
             // The view and projection matrices are provided by the system; they are associated
             // with holographic cameras, and updated on a per-camera basis.
@@ -125,7 +130,7 @@ namespace VR_Player.Content
             var context = this.deviceResources.D3DDeviceContext;
             
             // Each vertex is one instance of the VertexPositionColor struct.
-            int stride = SharpDX.Utilities.SizeOf<VertexPositionColor>();
+            int stride = SharpDX.Utilities.SizeOf<TexturedVertex>();
             int offset = 0;
             var bufferBinding = new SharpDX.Direct3D11.VertexBufferBinding(this.vertexBuffer, stride, offset);
             context.InputAssembler.SetVertexBuffers(0, bufferBinding);
@@ -151,7 +156,10 @@ namespace VR_Player.Content
             }
 
             // Attach the pixel shader.
-            context.PixelShader.SetShader(this.pixelShader, null, 0);
+            //context.PixelShader.SetShader(this.pixelShader, null, 0);
+
+            context.PixelShader.SetShaderResource(0, textureView);
+            context.PixelShader.Set(this.pixelShader);
 
             // Draw the objects.
             context.DrawIndexedInstanced(
@@ -194,7 +202,7 @@ namespace VR_Player.Content
             SharpDX.Direct3D11.InputElement[] vertexDesc =
             {
                 new SharpDX.Direct3D11.InputElement("POSITION", 0, SharpDX.DXGI.Format.R32G32B32_Float,  0, 0, SharpDX.Direct3D11.InputClassification.PerVertexData, 0),
-                new SharpDX.Direct3D11.InputElement("COLOR",    0, SharpDX.DXGI.Format.R32G32B32_Float, 12, 0, SharpDX.Direct3D11.InputClassification.PerVertexData, 0),
+                new SharpDX.Direct3D11.InputElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, 12, 0, SharpDX.Direct3D11.InputClassification.PerVertexData, 0),
             };
 
             inputLayout = this.ToDispose(new SharpDX.Direct3D11.InputLayout(
@@ -225,16 +233,17 @@ namespace VR_Player.Content
             // Note that the cube size has changed from the default DirectX app
             // template. Windows Holographic is scaled in meters, so to draw the
             // cube at a comfortable size we made the cube width 0.2 m (20 cm).
-            VertexPositionColor[] cubeVertices =
+            TexturedVertex[] cubeVertices =
             {
-                new VertexPositionColor(new Vector3(-0.1f, -0.1f, -0.1f), new Vector3(0.0f, 0.0f, 0.0f)),
-                new VertexPositionColor(new Vector3(-0.1f, -0.1f,  0.1f), new Vector3(0.0f, 0.0f, 1.0f)),
-                new VertexPositionColor(new Vector3(-0.1f,  0.1f, -0.1f), new Vector3(0.0f, 1.0f, 0.0f)),
-                new VertexPositionColor(new Vector3(-0.1f,  0.1f,  0.1f), new Vector3(0.0f, 1.0f, 1.0f)),
-                new VertexPositionColor(new Vector3( 0.1f, -0.1f, -0.1f), new Vector3(1.0f, 0.0f, 0.0f)),
-                new VertexPositionColor(new Vector3( 0.1f, -0.1f,  0.1f), new Vector3(1.0f, 0.0f, 1.0f)),
-                new VertexPositionColor(new Vector3( 0.1f,  0.1f, -0.1f), new Vector3(1.0f, 1.0f, 0.0f)),
-                new VertexPositionColor(new Vector3( 0.1f,  0.1f,  0.1f), new Vector3(1.0f, 1.0f, 1.0f)),
+                new TexturedVertex(new Vector3(-0.526f,  0.296f,  0), new Vector2(0, 0)),
+                new TexturedVertex(new Vector3( 0.526f,  0.296f,  -0.01f), new Vector2(0.5f, 0)),
+                new TexturedVertex(new Vector3( 0.526f, -0.296f,  -0.01f), new Vector2(0.5f, 1)),
+                new TexturedVertex(new Vector3(-0.526f, -0.296f,  0), new Vector2(0, 1)),
+
+                new TexturedVertex(new Vector3(0.527f,  0.296f,  -0.01f), new Vector2(0.5f, 0)),
+                new TexturedVertex(new Vector3(1.579f,  0.296f,  0), new Vector2(1, 0)),
+                new TexturedVertex(new Vector3(1.579f, -0.296f,  0), new Vector2(1, 1)),
+                new TexturedVertex(new Vector3(0.527f, -0.296f,  -0.01f), new Vector2(0.5f, 1)),
             };
 
             vertexBuffer = this.ToDispose(SharpDX.Direct3D11.Buffer.Create(
@@ -249,23 +258,8 @@ namespace VR_Player.Content
             // first triangle of this mesh.
             ushort[] cubeIndices =
             {
-                2,1,0, // -x
-                2,3,1,
-
-                6,4,5, // +x
-                6,5,7,
-
-                0,1,5, // -y
-                0,5,4,
-
-                2,6,7, // +y
-                2,7,3,
-
-                0,4,6, // -z
-                0,6,2,
-
-                1,3,7, // +z
-                1,7,5,
+                0,1,2, 0,2,3, // left
+                4,5,6, 4,6,7, //right
             };
 
             indexCount = cubeIndices.Length;
@@ -281,8 +275,20 @@ namespace VR_Player.Content
                 SharpDX.Direct3D11.BindFlags.ConstantBuffer,
                 ref modelConstantBufferData));
 
+            //更新图片
+            ChangeImage();
             // Once the cube is loaded, the object is ready to be rendered.
             loadingComplete = true;
+        }
+
+        /// <summary>
+        /// 更新图片
+        /// </summary>
+        public void ChangeImage()
+        {
+            Random random = new Random();
+            int n = random.Next(4);
+            this.textureView = TextureLoader.FromBitmapFile(deviceResources, "Assets\\test" + n + ".jpg");
         }
 
         /// <summary>

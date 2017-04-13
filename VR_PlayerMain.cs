@@ -167,9 +167,10 @@ namespace VR_Player
             {
                 // When a Pressed gesture is detected, the sample hologram will be repositioned
                 // two meters in front of the user.
-                spinningCubeRenderer.PositionHologram(
-                    pointerState.TryGetPointerPose(currentCoordinateSystem)
-                    );
+                //spinningCubeRenderer.PositionHologram(
+                //    pointerState.TryGetPointerPose(currentCoordinateSystem)
+                //    );
+                spinningCubeRenderer.ChangeImage();
             }
 #endif
 
