@@ -156,10 +156,9 @@ namespace VR_Player.Content
             }
 
             // Attach the pixel shader.
-            //context.PixelShader.SetShader(this.pixelShader, null, 0);
+            context.PixelShader.SetShader(this.pixelShader, null, 0);
 
             context.PixelShader.SetShaderResource(0, textureView);
-            context.PixelShader.Set(this.pixelShader);
 
             // Draw the objects.
             context.DrawIndexedInstanced(
