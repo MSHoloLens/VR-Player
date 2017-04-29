@@ -39,7 +39,9 @@ namespace VR_Player.Content
         // shader just to set the render target array index.
         private bool                                usingVprtShaders = false;
 
-        private Texture2D                           texture;
+        //private Texture2D                           texture;
+
+        private MediaPlayer                           mediaPlayer;
         /// <summary>
         /// Loads vertex and pixel shaders from files and instantiates the cube geometry.
         /// </summary>
@@ -127,6 +129,8 @@ namespace VR_Player.Content
                 return;
             }
 
+            mediaPlayer.TransferVideoFrame();
+
             var context = this.deviceResources.D3DDeviceContext;
             
             // Each vertex is one instance of the VertexPositionColor struct.
@@ -158,7 +162,7 @@ namespace VR_Player.Content
             // Attach the pixel shader.
             context.PixelShader.SetShader(this.pixelShader, null, 0);
 
-            context.PixelShader.SetShaderResource(0, textureView);
+            context.PixelShader.SetShaderResource(0, mediaPlayer.textureView);
 
             // Draw the objects.
             context.DrawIndexedInstanced(
@@ -275,7 +279,11 @@ namespace VR_Player.Content
                 ref modelConstantBufferData));
 
             //更新图片
-            ChangeImage();
+            //ChangeImage();
+
+            //初始化MediaPlayer
+            mediaPlayer = new MediaPlayer(deviceResources.D3DDevice);
+
             // Once the cube is loaded, the object is ready to be rendered.
             loadingComplete = true;
         }

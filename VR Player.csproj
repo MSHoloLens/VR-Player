@@ -45,6 +45,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\MediaPlayer.cs" />
     <Compile Include="Content\TextureLoader.cs" />
     <Compile Include="VR_PlayerMain.cs" />
     <Compile Include="AppView.cs" />
@@ -68,6 +69,7 @@
     <None Include="VR Player_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\publichd.best.of.3D.05.1080p_201731221849.mp4" />
     <Content Include="Assets\test0.jpg" />
     <Content Include="Assets\test1.jpg" />
     <Content Include="Assets\test2.jpg" />
@@ -88,6 +90,9 @@
     <PixelShader Include="Content\Shaders\PixelShader.hlsl" />
     <VertexShader Include="Content\Shaders\VertexShader.hlsl" />
     <VertexShader Include="Content\Shaders\VPRTVertexShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
