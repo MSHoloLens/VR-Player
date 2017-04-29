@@ -170,7 +170,7 @@ namespace VR_Player
                 //spinningCubeRenderer.PositionHologram(
                 //    pointerState.TryGetPointerPose(currentCoordinateSystem)
                 //    );
-                spinningCubeRenderer.ChangeImage();
+                //spinningCubeRenderer.ChangeImage();
             }
 #endif
 
